@@ -10,6 +10,8 @@ import csrf from 'csurf';
 
 // Own modules.
 import userRoutes from './routes/userRoutes.js';
+import propertyRoutes from './routes/propertyRoutes.js';
+
 import db from './config/db.js';
 
 
@@ -53,6 +55,7 @@ app.use(express.static('public'));
 
 // Routing
 app.use('/auth', userRoutes);
+app.use('/', propertyRoutes);
 
 
 // Default 404 for non-existing routes.

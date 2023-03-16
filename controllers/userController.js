@@ -73,7 +73,7 @@ const login = async (req, res) => {
         });
     }
 
-    // Login user.
+    // Login user. Generate JWT and redirect to "my properties" view.
     const token = generateJWT({id: user.id, name: user.name});
 
     return res.cookie('_token', token, {

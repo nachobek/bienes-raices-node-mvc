@@ -15,4 +15,5 @@ Execute ``` npm run css ``` to kick off postcss/tailwind in watch mode.
 
 # Note:
 -MySQL Database is required.
+
 -Mailtrap is used as email server to test sending/receiveing emails.
