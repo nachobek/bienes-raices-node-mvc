@@ -1,0 +1,36 @@
+extends ../layout/index
+
+block content
+    div.py-10
+        h1(class="text-4xl my-10 font-extrabold text-center") Real
+            span(class="font-normal") Estate
+        h2.text-center.text-2xl.font-extrabold Create Account
+
+        if errors
+            div(class="max-w-md mx-auto my-10")
+                each error in errors
+                    p(class="bg-red-500 text-white uppercase text-xs text-center p-2 mb-1 font-bold")= error.msg 
+
+
+        .mt-8.mx-auto.max-w-md 
+            .bg-white.py-8.px-4.shadow
+                form(class="space-y-3" method="POST" action="/auth/register")
+                    input(type="hidden" name="_csrf" value= csrfToken)
+                    div 
+                        label(class="block text-sm uppercase text-gray-500 mb-2 font-bold" for="name") Full Name
+                        input#name.w-full.px-3.py-2.border.border-gray-300.rounded-md(placeholder="Your Name" type="text" name="name" value= user ? user.name : '')
+                    div 
+                        label(class="block text-sm uppercase text-gray-500 mb-2 font-bold" for="email") Email
+                        input#email.w-full.px-3.py-2.border.border-gray-300.rounded-md(placeholder="email@domain.com" type="email" name="email" value= user ? user.email : '')
+                    div 
+                        label(class="block text-sm uppercase text-gray-500 mb-2 font-bold" for="password") Password
+                        input#password.w-full.px-3.py-2.border.border-gray-300.rounded-md(placeholder="Password" type="password" name="password")
+                    div 
+                        label(class="block text-sm uppercase text-gray-500 mb-2 font-bold" for="repeat-password") Repeat Password
+                        input#repeat-password.w-full.px-3.py-2.border.border-gray-300.rounded-md(placeholder="Password" type="password" name="repeat-password")
+
+                    div.flex.items-center.justify-between
+                        a.text-gray-500.text-xs(href="/auth/login") Already registered? Sign In
+                        a.text-gray-500.text-xs(href="/auth/recover-password") Recover password
+
+                    input(class="w-full bg-indigo-500 hover:bg-indigo-600 py-2 text-slate-50 cursor-pointer" type="submit" value="Create Account")
