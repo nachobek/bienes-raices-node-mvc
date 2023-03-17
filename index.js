@@ -1,5 +1,6 @@
 // Node modules.
 import * as url from 'url';  // Enable __dirname since it's not available by default when working with ES module.
+import path from 'path'; // Alternative to importing 'url' to get to the absolute path (like __dirname).
 
 
 // 3rd party modules.
@@ -59,10 +60,12 @@ app.use('/', propertyRoutes);
 
 
 // Default 404 for non-existing routes.
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url)); // Enable __dirname since it's not available by default when working with ES modules.
+// const __dirname = url.fileURLToPath(new URL('.', import.meta.url)); // Enable __dirname since it's not available by default when working with ES modules.
+
 
 app.get('*', (req, res) => {
-    res.sendFile(__dirname + '/public/404.html');
+    // res.sendFile(__dirname + '/public/404.html');
+    res.sendFile(path.resolve('public/404.html')); // Alternative to creating a custom constant called __dirname.
 });
 
 
