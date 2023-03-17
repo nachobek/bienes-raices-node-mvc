@@ -7,6 +7,8 @@ html(lang="en")
         //- page is a variable that comes from userController.
         title Real Estate |  #{page}
         link(rel="stylesheet", href="/css/app.css")
+        block styles
+
     body.min-h-screen.bg-gray-50
         //- header in the "if" is a variable that comes from the backend res.render.
         //- if true, the view will include the "header.pug" sub-view
