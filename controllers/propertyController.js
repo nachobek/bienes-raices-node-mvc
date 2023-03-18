@@ -1,3 +1,6 @@
+import Category from '../models/Category.js';
+import Price from '../models/Price.js';
+
 
 const admin = (req, res) => {
     return res.render('properties/admin', {
@@ -6,11 +9,18 @@ const admin = (req, res) => {
     });
 }
 
+// Form to list a new property.
+const list = async (req, res) => {
+    const [categories, prices] = await Promise.all([
+        Category.findAll(),
+        Price.findAll()
+    ]);
 
-const list = (req, res) => {
     return res.render('properties/list', {
         page: 'List Property',
-        header: true
+        header: true,
+        categories,
+        prices
     });
 }
 
