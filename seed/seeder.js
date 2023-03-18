@@ -2,8 +2,7 @@ import { exit } from 'node:process'
 
 
 import db from '../config/db.js';
-import Category from '../models/Category.js';
-import Price from '../models/Price.js';
+import { Category, Price } from '../models/index.js'
 import categories from './categories.js';
 import prices from './prices.js';
 
