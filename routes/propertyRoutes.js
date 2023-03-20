@@ -3,7 +3,7 @@ import { body } from 'express-validator'; // Same as check but only checking req
 
 
 import { admin, listPropertyForm, listProperty } from '../controllers/propertyController.js';
-
+import protectRoute from '../middlewares/protectRoute.js';
 
 
 // Router development.
@@ -11,15 +11,16 @@ import { admin, listPropertyForm, listProperty } from '../controllers/propertyCo
 const router = express.Router();
 
 
-router.get('/my-properties', admin);
+router.get('/my-properties', protectRoute, admin);
 
-router.get('/properties/list', listPropertyForm);
+router.get('/properties/list', protectRoute, listPropertyForm);
 
 router.post('/properties/list', [
-    body('tittle', 'Listing tittle is required').notEmpty(),
+    protectRoute,
+    body('title', 'Listing tittle is required').notEmpty(),
     body('description', 'Property description is required')
         .notEmpty()
-        .isLength({ max: 5 }).withMessage('The Description is too long'),
+        .isLength({ max: 255 }).withMessage('The Description is too long'),
     body('category', 'Select a category').isNumeric(),
     body('price', 'Select a price range').isNumeric(),
     body('rooms', 'Select the number of rooms').isNumeric(),

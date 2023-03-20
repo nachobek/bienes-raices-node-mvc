@@ -51,6 +51,8 @@ const listProperty = async (req, res) => {
 
     const { title, description, category, price, rooms, parking, bathroom, street, lat, lng} = req.body;
 
+    const { id: userId } = req.user;
+
     try {
         const newProperty = await Property.create({
             title,
@@ -61,16 +63,18 @@ const listProperty = async (req, res) => {
             street,
             lat,
             lng,
+            image: '',
             // isPublished,
             priceId: price,
+            userId, // id destructured from req.user
             categoryId: category
         });
 
+        return res.redirect(`/properties/upload-image/${newProperty.id}`);
     } catch (error) {
         // throw new Error('Failure when inserting a Property in the DB:\n', error);
         console.log('Failure when inserting a Property in the DB:\n', error);
     }
-
 }
 
 
