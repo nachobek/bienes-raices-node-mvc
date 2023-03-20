@@ -1,6 +1,7 @@
 (function() {
-    const lat = 41.3935138;
-    const lng = 2.1791033;
+    // const lat = document.querySelector('#lat').value ?? 41.3935138; // Using Nullish coalescing (??) assigns the hardcoded number if ".value" is null or undefined. But since we are getting either a value or ''. It will never match such a condition.
+    const lat = document.querySelector('#lat').value || 41.3935138; // Useing OR (||) assigns the hardcoded number if ".value" is falsy.
+    const lng = document.querySelector('#lng').value || 2.1791033;
     const map = L.map('map').setView([lat, lng ], 14);
 
     let marker;

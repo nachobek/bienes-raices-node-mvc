@@ -9,19 +9,25 @@ block content
             span(class="font-normal") Estate
         h2.text-center.text-2xl.font-extrabold= page
 
+        if errors 
+            div(class="max-w-md mx-auto my-10")
+                each error in errors
+                    p(class="bg-red-500 text-white uppercase text-xs text-center p-2 mb-1 font-bold")= error.msg 
+
         div(class="bg-white shadow py-8 px-4 rounded mx-auto max-w-4xl my-10 md:px-10")
-            form.space-y-8
+            form.space-y-8(method="POST" action="/properties/list")
+                input(type="hidden" name="_csrf" value= csrfToken)
                 div(class="space-y-5") 
                     h3(class="text-lg leading-6 font-medium text-gray-900 text-center") General Info 
                     p(class="text-gray-600 text-center") Provide information about your property 
 
                     div 
                         label(class="block text-sm uppercase text-gray-500 mb-2 font-bold" for="title") Listing Title
-                        input#title.w-full.px-3.py-2.border.border-gray-300.rounded-md(placeholder="Listing Title. i.e. Home beach" type="text" name="title")
+                        input#title.w-full.px-3.py-2.border.border-gray-300.rounded-md(placeholder="Listing Title. i.e. Home beach" type="text" name="title" value= formData.title ? formData.title : '')
 
                     div 
                         label(class="block text-sm uppercase text-gray-500 mb-2 font-bold" for="description") Description
-                        textarea#description.w-full.px-3.py-2.border.border-gray-300.rounded-md(placeholder="Description of the property" type="text" name="description")
+                        textarea#description.w-full.px-3.py-2.border.border-gray-300.rounded-md(placeholder="Description of the property" type="text" name="description")= formData.description ? formData.description : ''
 
                     div(class="md:flex md:gap-4 space-y-5 md:space-y-0")
 
@@ -31,7 +37,8 @@ block content
                                 option(value="") - Select -
                                 if categories 
                                     each category in categories 
-                                        option(value=category.id) #{category.name}
+                                        //- If we receive a value in "formData.category" we evaluate it matches with one of the elements from the "categories" array, if so, we mark that one as selected. Otherwise we set selected to null.
+                                        option(value=category.id selected=formData.category ? formData.category == category.id ? true : false : null ) #{category.name}
 
                         div(class="md:w-1/2")
                             label(class="block text-sm uppercase text-gray-500 mb-2 font-bold" for="price") Price
@@ -39,7 +46,7 @@ block content
                                 option(value="") - Select -
                                 if prices 
                                     each price in prices 
-                                        option(value=price.id) #{price.priceRange}
+                                        option(value=price.id selected=formData.price ? formData.price == price.id ? true : false : null) #{price.priceRange}
 
                     div(class="md:flex md:gap-4 space-y-5 md:space-y-0")
 
@@ -49,8 +56,8 @@ block content
                                 option(value="") - Select -
                                 - let roomOptions = 1;
                                     while roomOptions < 7
-                                        option(value=roomOptions) #{roomOptions++}
-                                option(value="7") 7+
+                                        option(value=roomOptions selected=formData.rooms ? formData.rooms == roomOptions ? true : false : null) #{roomOptions++}
+                                option(value="7" selected=formData.rooms ? formData.rooms == roomOptions ? true : false : null) 7+
 
                         div(class="md:w-1/3")
                             label(class="block text-sm uppercase text-gray-500 mb-2 font-bold" for="parking") Parking
@@ -58,8 +65,8 @@ block content
                                 option(value="") - Select -
                                 - let parkingOptions = 0;
                                     while parkingOptions < 4
-                                        option(value=parkingOptions) #{parkingOptions++}
-                                option(value="4") 4+
+                                        option(value=parkingOptions selected=formData.parking ? formData.parking == parkingOptions ? true : false : null) #{parkingOptions++}
+                                option(value="4" selected=formData.parking ? formData.parking == parkingOptions ? true : false : null) 4+
 
                         div(class="md:w-1/3")
                             label(class="block text-sm uppercase text-gray-500 mb-2 font-bold" for="bathroom") Bathroom
@@ -67,8 +74,8 @@ block content
                                 option(value="") - Select -
                                 - let bathroomOptions = 1;
                                     while bathroomOptions < 4
-                                        option(value=bathroomOptions) #{bathroomOptions++}
-                                option(value="4") 4+
+                                        option(value=bathroomOptions selected=formData.bathroom ? formData.bathroom == bathroomOptions ? true : false : null) #{bathroomOptions++}
+                                option(value="4" selected=formData.bathroom ? formData.bathroom == bathroomOptions ? true : false : null) 4+
 
                     div(class="border-gray-200 border-t py-5 space-y-5")
                         h3(class="text-lg leading-6 font-medium text-gray-900 text-center") Property Location 
@@ -76,11 +83,13 @@ block content
                         div(id="map" class="h-96")
 
                         div 
-                            p(class="street")
+                            p(class="street")= formData.street ? formData.street : ''
                         
-                        input(type="hidden" name="street" id="street")
-                        input(type="hidden" name="lat" id="lat")
-                        input(type="hidden" name="lng" id="lng")
+                        input(type="hidden" name="street" id="street" value= formData.street ? formData.street : '')
+                        input(type="hidden" name="lat" id="lat" value= formData.lat ? formData.lat : '')
+                        input(type="hidden" name="lng" id="lng" value= formData.lng ? formData.lng : '')
+
+                    input(class="w-full py-3 bg-indigo-500 hover:bg-indigo-600 rounded text-slate-50 font-bold uppercase cursor-pointer" type="submit" value="Upload Image")
 
 block scripts
     script(src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js")

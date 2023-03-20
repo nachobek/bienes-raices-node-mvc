@@ -1,5 +1,7 @@
-import Category from '../models/Category.js';
-import Price from '../models/Price.js';
+import { validationResult } from 'express-validator';
+
+
+import { Price, Category, Property } from '../models/index.js';
 
 
 const admin = (req, res) => {
@@ -10,7 +12,7 @@ const admin = (req, res) => {
 }
 
 // Form to list a new property.
-const list = async (req, res) => {
+const listPropertyForm = async (req, res) => {
     const [categories, prices] = await Promise.all([
         Category.findAll(),
         Price.findAll()
@@ -20,12 +22,60 @@ const list = async (req, res) => {
         page: 'List Property',
         header: true,
         categories,
-        prices
+        prices,
+        csrfToken: req.csrfToken(),
+        formData: {} // Sending an empty object so the "autocomplete" logic in the view won't throw an error.
     });
+}
+
+const listProperty = async (req, res) => {
+    // Gather potential errors identified by "body()" in the router.
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        const [categories, prices] = await Promise.all([
+            Category.findAll(),
+            Price.findAll()
+        ]);
+
+        return res.render('properties/list', {
+            page: 'List Property',
+            header: true,
+            categories,
+            prices,
+            errors: errors.array({ onlyFirstError: true }),
+            csrfToken: req.csrfToken(),
+            formData: req.body // Passing the body back to the form so it preserves the user inputed data.
+        });
+    }
+
+    const { title, description, category, price, rooms, parking, bathroom, street, lat, lng} = req.body;
+
+    try {
+        const newProperty = await Property.create({
+            title,
+            description,
+            rooms,
+            parking,
+            bathroom,
+            street,
+            lat,
+            lng,
+            // isPublished,
+            priceId: price,
+            categoryId: category
+        });
+
+    } catch (error) {
+        // throw new Error('Failure when inserting a Property in the DB:\n', error);
+        console.log('Failure when inserting a Property in the DB:\n', error);
+    }
+
 }
 
 
 export {
     admin,
-    list
+    listPropertyForm,
+    listProperty
 }
