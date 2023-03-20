@@ -10,6 +10,11 @@ html(lang="en")
         block styles
 
     body.min-h-screen.bg-gray-50
+        //- header in the "if" is a variable that comes from the backend res.render.
+        //- if true, the view will include the "header.pug" sub-view
+        if header
+            //- include header.pug
+            include header
 
         main(class="mx-auto container mt-10 px-2")
             block content

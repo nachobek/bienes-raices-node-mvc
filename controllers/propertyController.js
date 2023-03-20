@@ -6,8 +6,7 @@ import { Price, Category, Property } from '../models/index.js';
 
 const admin = (req, res) => {
     return res.render('properties/admin', {
-        page: 'My Properties',
-        header: true
+        page: 'My Properties'
     });
 }
 
@@ -20,7 +19,6 @@ const listPropertyForm = async (req, res) => {
 
     return res.render('properties/list', {
         page: 'List Property',
-        header: true,
         categories,
         prices,
         csrfToken: req.csrfToken(),
@@ -40,7 +38,6 @@ const listProperty = async (req, res) => {
 
         return res.render('properties/list', {
             page: 'List Property',
-            header: true,
             categories,
             prices,
             errors: errors.array({ onlyFirstError: true }),
@@ -77,9 +74,19 @@ const listProperty = async (req, res) => {
     }
 }
 
+const uploadImageForm = async (req, res) => {
+    res.render('properties/upload-image', {
+        page: 'Upload Property Images',
+        csrfToken: req.csrfToken(),
+        formData: {}
+
+    });
+}
+
 
 export {
     admin,
     listPropertyForm,
-    listProperty
+    listProperty,
+    uploadImageForm
 }

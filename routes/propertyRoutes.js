@@ -2,7 +2,7 @@ import express from 'express';
 import { body } from 'express-validator'; // Same as check but only checking req.body.
 
 
-import { admin, listPropertyForm, listProperty } from '../controllers/propertyController.js';
+import { admin, listPropertyForm, listProperty, uploadImageForm } from '../controllers/propertyController.js';
 import protectRoute from '../middlewares/protectRoute.js';
 
 
@@ -28,6 +28,8 @@ router.post('/properties/list', [
     body('bathroom', 'Select the number of badthrooms').isNumeric(),
     body('lat', 'Locate the property on the map').notEmpty(),
 ], listProperty);
+
+router.get('/properties/upload-image/:propertyId', protectRoute, uploadImageForm);
 
 
 export default router;
