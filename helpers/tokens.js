@@ -6,7 +6,7 @@ const generateId = () => {
 }
 
 
-const generateJWT = userData => jwt.sign({ id: userData.id, name: userData.name }, process.env.JWT_SECRET, { expiresIn: '1h' });
+const generateJWT = userData => jwt.sign({ id: userData.id, name: userData.name }, process.env.JWT_SECRET, { expiresIn: '3h' });
 
 
 export {

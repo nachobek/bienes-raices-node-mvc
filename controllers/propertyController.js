@@ -75,18 +75,69 @@ const listProperty = async (req, res) => {
 }
 
 const uploadImageForm = async (req, res) => {
+    const { propertyId } = req.params;
+
+    const property = await Property.findByPk(propertyId);
+
+    if (!property) {
+        return res.redirect('/my-properties');
+    }
+
+    if (property.isPublished) {
+        // If the property is already published, we don't allow access to the "upload-image" page.
+        return res.redirect('/my-properties');
+    }
+
+    // Validate that the authenticated user owns the property to be published.
+    if (req.user.id.toString() !== property.userId.toString()) {
+        return res.redirect('/my-properties');
+    }
+
     res.render('properties/upload-image', {
         page: 'Upload Property Images',
         csrfToken: req.csrfToken(),
-        formData: {}
-
+        property // Passing back the property info to the form, so it can create the POST url based on the property ID.
     });
 }
 
+const uploadImage = async (req, res, next) => {
+    
+    const { propertyId } = req.params;
+
+    const property = await Property.findByPk(propertyId);
+
+    if (!property) {
+        return res.redirect('/my-properties');
+    }
+
+    if (property.isPublished) {
+        return res.redirect('/my-properties');
+    }
+
+    if (req.user.id.toString() !== property.userId.toString()) {
+        return res.redirect('/my-properties');
+    }
+
+    try {
+        property.image = req.file.filename;
+        property.isPublished = true;
+
+        await property.save();
+
+        // This redirect does not take effect because when the "publish" button is pressed, the dropzone script (/src/js/uploadImage.js) takes over.
+        // return res.redirect('/my-properties');
+
+        // The redirect within the dropzone script will not take effect either, unless there is a next() to move on to the next middleware.
+        return next();
+    } catch (error) {
+        console.log('Error when storing the image.\n', error);
+    }
+}
 
 export {
     admin,
     listPropertyForm,
     listProperty,
-    uploadImageForm
+    uploadImageForm,
+    uploadImage
 }

@@ -2,8 +2,9 @@ import express from 'express';
 import { body } from 'express-validator'; // Same as check but only checking req.body.
 
 
-import { admin, listPropertyForm, listProperty, uploadImageForm } from '../controllers/propertyController.js';
+import { admin, listPropertyForm, listProperty, uploadImageForm, uploadImage } from '../controllers/propertyController.js';
 import protectRoute from '../middlewares/protectRoute.js';
+import upload from '../middlewares/uploadImage.js';
 
 
 // Router development.
@@ -30,6 +31,13 @@ router.post('/properties/list', [
 ], listProperty);
 
 router.get('/properties/upload-image/:propertyId', protectRoute, uploadImageForm);
+
+router.post('/properties/upload-image/:propertyId',
+    protectRoute,
+    upload.single('image'),
+    // At this point the image is already in the server. We need to update the data in the DB.
+    uploadImage
+);
 
 
 export default router;

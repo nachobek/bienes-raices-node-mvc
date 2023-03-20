@@ -1,13 +1,16 @@
 extends ../layout/admin
 
-//- block styles
-
+block styles
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.css")
+    //- Pass the csrf token to the "head, so it can be accessed by dropzone - via Ajax"
+    meta(name="csrf-token" content= csrfToken)
 
 block content
     div.py-10
         h1(class="text-4xl my-10 font-extrabold text-center") Real
             span(class="font-normal") Estate
         h2.text-center.text-2xl.font-extrabold= page
+        h3(class="my-10 text-2xl leading-6 font-bold text-gray-900 text-center")= property.title
 
         if errors 
             div(class="max-w-md mx-auto my-10")
@@ -15,10 +18,10 @@ block content
                     p(class="bg-red-500 text-white uppercase text-xs text-center p-2 mb-1 font-bold")= error.msg 
 
         div(class="bg-white shadow py-8 px-4 rounded mx-auto max-w-4xl my-10 md:px-10")
-            form.space-y-8(method="POST" action="/properties/list")
+            form.space-y-8(id="uploadImage" class="dropzone border-dashed border-2 w-full min:h-96 h-auto rounded flex-col justify-center items-center" method="POST" action=`/properties/upload-image/${property.id}`)
                 input(type="hidden" name="_csrf" value= csrfToken)
 
-
-                input(class="w-full py-3 bg-indigo-500 hover:bg-indigo-600 rounded text-slate-50 font-bold uppercase cursor-pointer" type="submit" value="Publish Property")
+            button(id="publish" class="w-full py-3 bg-indigo-500 hover:bg-indigo-600 rounded text-slate-50 font-bold uppercase cursor-pointer mt-5" type="button") Publish Property
 
 block scripts
+    script(src="/js/uploadImage.js")
