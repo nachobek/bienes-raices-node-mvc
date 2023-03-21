@@ -1,12 +1,31 @@
+// Node modules.
+import { unlink } from 'node:fs/promises'
+
+// 3rd party modules.
 import { validationResult } from 'express-validator';
 
-
+// Own modules.
 import { Price, Category, Property } from '../models/index.js';
 
 
-const admin = (req, res) => {
+// Controller development.
+const admin = async (req, res) => {
+    const { id: userId } = req.user;
+
+    const properties = await Property.findAll({
+        where: {
+            userId
+        },
+        include: [
+            { model: Category, as: 'category' },
+            { model: Price, as: 'price' }
+        ]
+    });
+
     return res.render('properties/admin', {
-        page: 'My Properties'
+        page: 'My Properties',
+        properties,
+        csrfToken: req.csrfToken()
     });
 }
 
@@ -134,10 +153,129 @@ const uploadImage = async (req, res, next) => {
     }
 }
 
+const editPropertyForm = async (req, res) => {
+    // Validate property exists.
+    const { propertyId } = req.params;
+
+    const property = await Property.findByPk(propertyId);
+
+    if (!property) {
+        return res.redirect('/my-properties');
+    }
+
+    // Validate that the authenticated user owns the property to be published.
+    if (req.user.id.toString() !== property.userId.toString()) {
+        return res.redirect('/my-properties');
+    }
+
+    const [categories, prices] = await Promise.all([
+        Category.findAll(),
+        Price.findAll()
+    ]);
+
+    return res.render('properties/edit', {
+        page: `Edit Property`,
+        categories,
+        prices,
+        csrfToken: req.csrfToken(),
+        formData: property
+    });
+}
+
+const editProperty = async (req, res) => {
+    // Gather potential errors identified by "body()" in the router.
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        const [categories, prices] = await Promise.all([
+            Category.findAll(),
+            Price.findAll()
+        ]);
+
+        return res.render('properties/edit', {
+            page: `Edit Property`,
+            categories,
+            prices,
+            errors: errors.array({ onlyFirstError: true }),
+            csrfToken: req.csrfToken(),
+            formData: req.body
+        });
+    }
+
+    // Validate property exists.
+    const { propertyId } = req.params;
+
+    const property = await Property.findByPk(propertyId);
+
+    if (!property) {
+        return res.redirect('/my-properties');
+    }
+
+    // Validate that the authenticated user owns the property to be published.
+    if (req.user.id.toString() !== property.userId.toString()) {
+        return res.redirect('/my-properties');
+    }
+
+    try {
+        const { title, description, category, price, rooms, parking, bathroom, street, lat, lng} = req.body;
+
+        property.set({
+            title,
+            description,
+            rooms,
+            parking,
+            bathroom,
+            street,
+            lat,
+            lng,
+            priceId: price,
+            categoryId: category
+        });
+
+        await property.save();
+
+        return res.redirect(`/my-properties`);
+    } catch (error) {
+        console.log(`Error when updating Property ${property.id} in the DB.\n`, error);
+    }
+}
+
+const deleteProperty = async (req, res) => {
+    // Validate property exists.
+    const { propertyId } = req.params;
+
+    const property = await Property.findByPk(propertyId);
+
+    if (!property) {
+        return res.redirect('/my-properties');
+    }
+
+    // Validate that the authenticated user owns the property to be published.
+    if (req.user.id.toString() !== property.userId.toString()) {
+        return res.redirect('/my-properties');
+    }
+
+    try {
+        // Remove image from server.
+        await unlink(`public/uploads/${property.image}`);
+
+        // Delete record from DB.
+        await property.destroy();
+
+        return res.redirect('/my-properties');
+    } catch (error) {
+        console.log(`Error when deleting Property ${property.id} from the DB.\n`, error);
+        return res.redirect(`/my-properties`);
+    }
+}
+
 export {
     admin,
     listPropertyForm,
     listProperty,
     uploadImageForm,
-    uploadImage
+    uploadImage,
+    editPropertyForm,
+    editProperty,
+    deleteProperty
 }

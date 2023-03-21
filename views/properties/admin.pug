@@ -7,3 +7,37 @@ block content
         h2.text-center.text-2xl.font-extrabold= page
 
         a(href="/properties/list" class="bg-indigo-500 hover:bg-indigo-600 rounded text-sm py-2 px-10 font-bold text-center text-white uppercase my-5 inline-block w-full sm:w-auto") List a property
+
+        //- Show the object we are receiving as a formatted text.
+        //- pre= JSON.stringify(properties, undefined, 2)
+
+        if properties.length
+            div(class="bg-white shad rounded-lg")
+                ul(class="divide-y divide-gray-200")
+                    each property in properties
+                        li 
+                            div(class="p-6 w-full flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 md:space-y-0 gap-4")
+                                //- 3 columns for each row to display content.
+                                div(class="sm:w-1/4 md:w-1/6")
+                                    img(src=`uploads/${property.image}` alt=`Image property: ${property.title}` class="w-full block")
+
+                                div(class="sm:w-2/4 md:w-3/6 lg:w-4/6 space-y-2")
+                                    a(class="block text-2xl font-extrabold text-indigo-500 truncate" href="#")= property.title
+
+                                    p(class="text-sm text-black font-bold")= `Category: ${property.category.name}`
+
+                                    p(class="text-sm text-black font-bold")= `Price Range: ${property.price.priceRange}`
+
+                                //- div(class="sm:w-1/4 md:w-2/6 lg:w-1/6 flex flex-col gap-2")
+                                div(class="sm:w-1/4 md:w-2/6 lg:flex-1 flex flex-col gap-2 lg:flex-row")
+                                    form(action="#")
+                                        input(type="submit" class=`px-2 py-2 md:py-1 text-xs leading-5 font-semibold rounded cursor-pointer w-full items-center ${property.isPublished ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}` value=`${property.isPublished ? 'Published' : 'Not Published'}`)
+                                    
+                                    a(href=`/properties/edit/${property.id}` class="px-2 py-2 md:py-1 text-xs leading-5 font-semibold rounded cursor-pointer bg-indigo-100 text-indigo-800 text-center") Edit
+
+                                    form(method="POST" action=`/properties/delete/${property.id}`)
+                                        input(type="hidden" name="_csrf" value= csrfToken)
+                                        input(type="submit" class="px-2 py-2 md:py-1 text-xs leading-5 font-semibold rounded cursor-pointer bg-red-100 text-red-800 w-full" value="Delete")
+
+        else 
+            p.text-center Nothing to display here
