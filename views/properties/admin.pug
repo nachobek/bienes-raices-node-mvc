@@ -39,5 +39,27 @@ block content
                                         input(type="hidden" name="_csrf" value= csrfToken)
                                         input(type="submit" class="px-2 py-2 md:py-1 text-xs leading-5 font-semibold rounded cursor-pointer bg-red-100 text-red-800 w-full" value="Delete")
 
+                div(class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6")
+                    //- Hide this pagination div on "medium/big" screens
+                    div(class="flex-1 flex justify-between sm:hidden")
+                        a(href=`/my-properties?page=${currentPage - 1}` class=`${currentPage == 1 ? 'pointer-events-none' : '' } relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50`) Previous
+
+                        a(href=`/my-properties?page=${currentPage + 1}` class=`${currentPage == totalPages ? 'pointer-events-none' : '' } relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50`) Next
+
+
+                    //- Hide this pagination div on "small" devices/screens
+                    div(class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between")
+                        p(class="text-sm text-gray-700 gap-2") Displaying 
+                            span(class="font-medium") #{offset + 1} to 
+                            span(class="font-medium") #{limit + offset > propertiesCount ? propertiesCount : limit + offset} of 
+                            span(class="font-medium") #{propertiesCount} properties
+
+                    //- Hide this pagination div on "small" devices/screens
+                    div(class="hidden sm:block")
+                        nav(class="relative z-0 inline-flex rounded-md shadow-md")
+                            - let n = 1;
+                                while n <= totalPages
+                                    a(href=`/my-properties?page=${n}` class=`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${currentPage == n ? 'bg-indigo-50 border-indigo-400 text-indigo-600' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'}`) #{n++}
+
         else 
             p.text-center Nothing to display here

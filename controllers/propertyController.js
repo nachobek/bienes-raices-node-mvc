@@ -10,23 +10,60 @@ import { Price, Category, Property } from '../models/index.js';
 
 // Controller development.
 const admin = async (req, res) => {
-    const { id: userId } = req.user;
+    // Identify and validate page number.
+    const { page: currentPage } = req.query;
 
-    const properties = await Property.findAll({
-        where: {
-            userId
-        },
-        include: [
-            { model: Category, as: 'category' },
-            { model: Price, as: 'price' }
-        ]
-    });
+    // Any number starting with "1 to 9" and finishing with "0 to 9".
+    // const regex = /^[0-9]+$/; // The problem with this one is that you can do: 00012.
+    const regex = /^[1-9][0-9]*$/;
 
-    return res.render('properties/admin', {
-        page: 'My Properties',
-        properties,
-        csrfToken: req.csrfToken()
-    });
+    if (!regex.test(currentPage)) {
+        console.log('holis\nholis\nholis\nholis\nholis\n')
+        return res.redirect('/my-properties?page=1');
+    }
+
+    try {
+        // Pagination Limit/Offset
+        const limit = 5;
+        const offset = ((currentPage * limit) - limit);
+
+        // Gather user and its listed properties.
+        const { id: userId } = req.user;
+
+        const [properties, propertiesCount] = await Promise.all([
+            Property.findAll({
+                limit,
+                offset,
+                where: {
+                    userId
+                },
+                include: [
+                    { model: Category, as: 'category' },
+                    { model: Price, as: 'price' }
+                ]
+            }),
+            Property.count({
+                where: {
+                    userId
+                }
+            })
+
+        ]);
+
+        return res.render('properties/admin', {
+            page: 'My Properties',
+            properties,
+            csrfToken: req.csrfToken(),
+            totalPages: Math.ceil(propertiesCount / limit),
+            currentPage: Number(currentPage),
+            limit,
+            offset,
+            propertiesCount
+        });
+    } catch (error) {
+        console.log(`Error when listing properties.\n`, error);
+        return res.redirect(`/my-properties?page=1`);
+    }
 }
 
 // Form to list a new property.
