@@ -83,9 +83,9 @@ block content
                         div(id="map" class="h-96")
 
                         div 
-                            p(class="street")= formData.street ? formData.street : ''
+                            p(class="address")= formData.address ? formData.address : ''
                         
-                        input(type="hidden" name="street" id="street" value= formData.street ? formData.street : '')
+                        input(type="hidden" name="address" id="address" value= formData.address ? formData.address : '')
                         input(type="hidden" name="lat" id="lat" value= formData.lat ? formData.lat : '')
                         input(type="hidden" name="lng" id="lng" value= formData.lng ? formData.lng : '')
 

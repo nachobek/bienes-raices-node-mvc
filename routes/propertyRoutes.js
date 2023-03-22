@@ -2,7 +2,7 @@ import express from 'express';
 import { body } from 'express-validator'; // Same as check but only checking req.body.
 
 
-import { admin, listPropertyForm, listProperty, uploadImageForm, uploadImage, editPropertyForm, editProperty, deleteProperty } from '../controllers/propertyController.js';
+import { admin, listPropertyForm, listProperty, uploadImageForm, uploadImage, editPropertyForm, editProperty, deleteProperty, displayProperty } from '../controllers/propertyController.js';
 import protectRoute from '../middlewares/protectRoute.js';
 import upload from '../middlewares/uploadImage.js';
 
@@ -11,6 +11,8 @@ import upload from '../middlewares/uploadImage.js';
 
 const router = express.Router();
 
+
+// Private section
 
 router.get('/my-properties', protectRoute, admin);
 
@@ -56,6 +58,11 @@ router.post('/properties/edit/:propertyId', [
 ], editProperty);
 
 router.post('/properties/delete/:propertyId', protectRoute, deleteProperty);
+
+
+// Public section
+
+router.get('/property/:propertyId', displayProperty);
 
 
 export default router;

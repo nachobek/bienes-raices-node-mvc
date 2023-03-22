@@ -28,7 +28,7 @@ const Property = db.define('properties', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    street: {
+    address: {
         type: DataTypes.STRING(100),
         allowNull: false
     },

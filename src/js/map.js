@@ -28,12 +28,12 @@
 
         map.panTo(new L.LatLng(position.lat, position.lng));
 
-        // Gather street info on new pin position.
+        // Gather address info on new pin position.
         geocodeService.reverse().latlng(position, 14).run((error, result) => {
             marker.bindPopup(result.address.LongLabel);
 
-            document.querySelector('.street').textContent = result?.address?.Address ?? '';
-            document.querySelector('#street').value = result?.address?.Address ?? '';
+            document.querySelector('.address').textContent = result?.address?.Address ?? '';
+            document.querySelector('#address').value = result?.address?.Address ?? '';
             document.querySelector('#lat').value = result?.latlng?.lat ?? '';
             document.querySelector('#lng').value = result?.latlng?.lng ?? '';
         });

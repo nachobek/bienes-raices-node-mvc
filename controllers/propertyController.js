@@ -65,7 +65,7 @@ const listProperty = async (req, res) => {
         });
     }
 
-    const { title, description, category, price, rooms, parking, bathroom, street, lat, lng} = req.body;
+    const { title, description, category, price, rooms, parking, bathroom, address, lat, lng} = req.body;
 
     const { id: userId } = req.user;
 
@@ -76,7 +76,7 @@ const listProperty = async (req, res) => {
             rooms,
             parking,
             bathroom,
-            street,
+            address,
             lat,
             lng,
             image: '',
@@ -217,7 +217,7 @@ const editProperty = async (req, res) => {
     }
 
     try {
-        const { title, description, category, price, rooms, parking, bathroom, street, lat, lng} = req.body;
+        const { title, description, category, price, rooms, parking, bathroom, address, lat, lng} = req.body;
 
         property.set({
             title,
@@ -225,7 +225,7 @@ const editProperty = async (req, res) => {
             rooms,
             parking,
             bathroom,
-            street,
+            address,
             lat,
             lng,
             priceId: price,
@@ -269,6 +269,27 @@ const deleteProperty = async (req, res) => {
     }
 }
 
+const displayProperty = async (req, res) => {
+    // Validate property exists.
+    const { propertyId } = req.params;
+
+    const property = await Property.findByPk(propertyId, {
+        include: [
+            { model: Category, as: 'category' },
+            { model: Price, as: 'price' }
+        ]
+    });
+
+    if (!property) {
+        return res.redirect('/404');
+    }
+
+    return res.render('properties/display', {
+        page: property.title,
+        property
+    });
+}
+
 export {
     admin,
     listPropertyForm,
@@ -277,5 +298,6 @@ export {
     uploadImage,
     editPropertyForm,
     editProperty,
-    deleteProperty
+    deleteProperty,
+    displayProperty
 }
