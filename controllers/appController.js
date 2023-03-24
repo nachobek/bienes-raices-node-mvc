@@ -1,4 +1,7 @@
+import { Sequelize } from 'sequelize';
+
 import { Price, Category, Property} from '../models/index.js';
+
 
 const homePage = async (req, res) => {
     const [prices, categories, featuredHouses, featuredApartments] = await Promise.all([
@@ -35,7 +38,8 @@ const homePage = async (req, res) => {
         prices,
         categories,
         featuredHouses,
-        featuredApartments
+        featuredApartments,
+        csrfToken: req.csrfToken()
     });
 }
 
@@ -59,18 +63,41 @@ const category = async (req, res) => {
 
     res.render('category', {
         page: `${category.name}s`,
-        properties
+        properties,
+        csrfToken: req.csrfToken()
     });
 }
 
 const notFound = (req, res) => {
     res.render('404', {
-        page: 'Not Found'
+        page: 'Not Found',
+        csrfToken: req.csrfToken()
     });
 }
 
-const searcher = (req, res) => {
-    
+const searcher = async (req, res) => {
+    const { searchTerm } = req.body;
+
+    if (!searchTerm.trim()) {
+        return res.redirect('back');
+    }
+
+    const properties = await Property.findAll({
+        where: {
+            title: {
+                [Sequelize.Op.like] : '%' + searchTerm + '%'
+            }
+        },
+        include: [
+            { model: Price, as: 'price' }
+        ]
+    });
+
+    res.render('search', {
+        page: 'Search Results',
+        properties,
+        csrfToken: req.csrfToken()
+    });
 }
 
 
