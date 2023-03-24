@@ -4,6 +4,14 @@ header.bg-indigo-500.p-4
             span.font-normal Estate
 
         nav(class="my-5 text-sm md:flex md:items-center md:gap-3 font-bold text-white hidden")
-            a(href="") My Properties
-            a(href="") Profile
-            a(href="" class="bg-indigo-700 py-2 px-10 rounded-lg") Sign Out
+            a(href="/auth/register") Create Account
+            a(href="/auth/login") Sign in
+
+//- This bar will be hidden expect for large devices/screens.
+div(class="bg-indigo-600 py-5 hidden lg:block")
+    div(class="container mx-auto flex justify-between")
+        a(href="/categories/1" class="text-sm font-bold uppercase text-white") Houses
+        a(href="/categories/2" class="text-sm font-bold uppercase text-white") Apartments
+        a(href="/categories/3" class="text-sm font-bold uppercase text-white") Retail Spaces
+        a(href="/categories/4" class="text-sm font-bold uppercase text-white") Cabins
+        a(href="/categories/5" class="text-sm font-bold uppercase text-white") Lots

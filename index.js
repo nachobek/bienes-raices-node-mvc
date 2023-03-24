@@ -12,6 +12,8 @@ import csrf from 'csurf';
 // Own modules.
 import userRoutes from './routes/userRoutes.js';
 import propertyRoutes from './routes/propertyRoutes.js';
+import appRoutes from './routes/appRoutes.js';
+import apiRoutes from './routes/apiRoutes.js';
 
 import db from './config/db.js';
 
@@ -55,14 +57,14 @@ app.set('views', './views');
 app.use(express.static('public'));
 
 // Routing
+app.use('/', appRoutes); // Public/general subroutes defined in appRoutes router.
 app.use('/auth', userRoutes);
-app.use('/', propertyRoutes);
+app.use('/', propertyRoutes); // Property related subroutes, such as "/my-properties"
+app.use('/api', apiRoutes);
 
 
 // Default 404 for non-existing routes.
 // const __dirname = url.fileURLToPath(new URL('.', import.meta.url)); // Enable __dirname since it's not available by default when working with ES modules.
-
-
 app.get('*', (req, res) => {
     // res.sendFile(__dirname + '/public/404.html');
     res.sendFile(path.resolve('public/404.html')); // Alternative to creating a custom constant called __dirname.
