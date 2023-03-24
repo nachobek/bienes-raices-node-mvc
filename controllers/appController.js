@@ -39,12 +39,34 @@ const homePage = async (req, res) => {
     });
 }
 
-const category = (req, res) => {
-    
+const category = async (req, res) => {
+    const { categoryId } = req.params;
+
+    const category = await Category.findByPk(categoryId);
+
+    if (!category) {
+        return res.redirect('/404');
+    }
+
+    const properties = await Property.findAll({
+        where: {
+            categoryId
+        },
+        include: [
+            { model: Price, as: 'price' }
+        ]
+    });
+
+    res.render('category', {
+        page: `${category.name}s`,
+        properties
+    });
 }
 
 const notFound = (req, res) => {
-    
+    res.render('404', {
+        page: 'Not Found'
+    });
 }
 
 const searcher = (req, res) => {

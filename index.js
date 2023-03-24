@@ -67,7 +67,8 @@ app.use('/api', apiRoutes);
 // const __dirname = url.fileURLToPath(new URL('.', import.meta.url)); // Enable __dirname since it's not available by default when working with ES modules.
 app.get('*', (req, res) => {
     // res.sendFile(__dirname + '/public/404.html');
-    res.sendFile(path.resolve('public/404.html')); // Alternative to creating a custom constant called __dirname.
+    // res.sendFile(path.resolve('public/404.html')); // Alternative to creating a custom constant called __dirname.
+    return res.redirect('/404'); // Redirecting to the /404 route, under "appRoutes". So it renders the .pug view.
 });
 
 
