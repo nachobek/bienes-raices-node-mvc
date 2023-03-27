@@ -2,9 +2,10 @@ import express from 'express';
 import { body } from 'express-validator'; // Same as check but only checking req.body.
 
 
-import { admin, listPropertyForm, listProperty, uploadImageForm, uploadImage, editPropertyForm, editProperty, deleteProperty, displayProperty } from '../controllers/propertyController.js';
+import { admin, listPropertyForm, listProperty, uploadImageForm, uploadImage, editPropertyForm, editProperty, deleteProperty, displayProperty, sendMessage, displayMessages } from '../controllers/propertyController.js';
 import protectRoute from '../middlewares/protectRoute.js';
 import upload from '../middlewares/uploadImage.js';
+import identifyUser from '../middlewares/identifyUser.js';
 
 
 // Router development.
@@ -60,9 +61,20 @@ router.post('/properties/edit/:propertyId', [
 router.post('/properties/delete/:propertyId', protectRoute, deleteProperty);
 
 
+// Display messages for each property under "my-properties" view.
+router.get('/messages/:propertyId', protectRoute, displayMessages);
+
+
+
 // Public section
 
-router.get('/property/:propertyId', displayProperty);
+router.get('/property/:propertyId', identifyUser, displayProperty);
+
+// Store/send "Contact Seller" messages if user is logged in.
+router.post('/property/:propertyId',
+    identifyUser,
+    body('message', 'The message is too short').isLength({min: 20}),
+    sendMessage);
 
 
 export default router;

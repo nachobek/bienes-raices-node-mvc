@@ -5,7 +5,8 @@ import { unlink } from 'node:fs/promises'
 import { validationResult } from 'express-validator';
 
 // Own modules.
-import { Price, Category, Property } from '../models/index.js';
+import { Price, Category, Property, Message, User } from '../models/index.js';
+import { isSeller, formatDate } from '../helpers/index.js';
 
 
 // Controller development.
@@ -39,7 +40,8 @@ const admin = async (req, res) => {
                 },
                 include: [
                     { model: Category, as: 'category' },
-                    { model: Price, as: 'price' }
+                    { model: Price, as: 'price' },
+                    { model: Message, as: 'messages'}
                 ]
             }),
             Property.count({
@@ -287,7 +289,7 @@ const deleteProperty = async (req, res) => {
         return res.redirect('/my-properties');
     }
 
-    // Validate that the authenticated user owns the property to be published.
+    // Validate that the authenticated user owns the property to be deleted.
     if (req.user.id.toString() !== property.userId.toString()) {
         return res.redirect('/my-properties');
     }
@@ -324,9 +326,104 @@ const displayProperty = async (req, res) => {
     return res.render('properties/display', {
         page: property.title,
         property,
-        csrfToken: req.csrfToken()
+        csrfToken: req.csrfToken(),
+        user: req.user,
+        isSeller: isSeller(req.user?.id, property.userId ) // True or False whether the user viewing the property is the seller itslef or not.
     });
 }
+
+const sendMessage = async (req, res) => {
+    // Validate property exists.
+    const { propertyId } = req.params;
+
+    const property = await Property.findByPk(propertyId, {
+        include: [
+            { model: Category, as: 'category' },
+            { model: Price, as: 'price' }
+        ]
+    });
+
+    if (!property) {
+        return res.redirect('/404');
+    }
+
+    // If property exists, check for errors in the request (message to the seller)
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return res.render('properties/display', {
+            page: property.title,
+            property,
+            csrfToken: req.csrfToken(),
+            user: req.user,
+            isSeller: isSeller(req.user?.id, property.userId ),
+            errors: errors.array({ onlyFirstError: true })
+        });
+    }
+
+    const { message } = req.body;
+    const { id: userId } = req.user;
+
+    try {
+        await Message.create({
+            message,
+            propertyId,
+            userId
+        });
+
+        return res.render('properties/display', {
+            page: property.title,
+            property,
+            csrfToken: req.csrfToken(),
+            user: req.user,
+            isSeller: isSeller(req.user?.id, property.userId ),
+            messageSent: true
+        });
+    } catch (error) {
+        console.log('Error when sending/storing message to seller\n', error);
+
+        return res.render('properties/display', {
+            page: property.title,
+            property,
+            csrfToken: req.csrfToken(),
+            user: req.user,
+            isSeller: isSeller(req.user?.id, property.userId ),
+            errors: [{msg: 'Error when sending message'}] // Custom error message in the front end (simulating the error type expected from express-validator)
+        });
+    }
+}
+
+// Display messages for a given property.
+const displayMessages = async (req, res) => {
+    // Validate property exists.
+    const { propertyId } = req.params;
+
+    const property = await Property.findByPk(propertyId, {
+        include: [
+            { model: Message, as: 'messages',
+                include: [
+                    { model: User.scope('hideSensitiveFields'), as: 'user' }
+                ]
+            }
+        ]
+    });
+
+    if (!property) {
+        return res.redirect('/my-properties');
+    }
+
+    // Validate that the authenticated user owns the published property.
+    if (req.user.id.toString() !== property.userId.toString()) {
+        return res.redirect('/my-properties');
+    }
+
+    res.render('properties/messages', {
+        page: 'Property Messages',
+        messages: property.messages,
+        formatDate // Passing the function to the view/frontend
+    })
+}
+
 
 export {
     admin,
@@ -337,5 +434,7 @@ export {
     editPropertyForm,
     editProperty,
     deleteProperty,
-    displayProperty
+    displayProperty,
+    sendMessage,
+    displayMessages
 }
