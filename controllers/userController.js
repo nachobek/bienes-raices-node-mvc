@@ -291,6 +291,23 @@ const resetPassword = async (req, res) => {
     });
 }
 
+const logout = async (req, res) => {
+    return res.clearCookie('_token').status(200).redirect('/');
+}
+
+const checkUserLogStatus = async (req, res) => {
+    let userLogged = false;
+
+    const { _token } = req.cookies;
+
+    if (_token) {
+        userLogged = true;
+    }
+
+    return res.json({
+        userLogged
+    });
+}
 
 export {
     loginForm,
@@ -301,5 +318,7 @@ export {
     recoverPasswordForm,
     recoverPassword,
     resetPasswordForm,
-    resetPassword
+    resetPassword,
+    logout,
+    checkUserLogStatus
 }

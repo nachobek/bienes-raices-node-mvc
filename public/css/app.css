@@ -811,9 +811,6 @@ video {
 .text-center {
   text-align: center;
 }
-.align-middle {
-  vertical-align: middle;
-}
 .text-2xl {
   font-size: 1.5rem;
   line-height: 2rem;
@@ -1105,11 +1102,6 @@ video {
 
   .lg\:flex-row {
     flex-direction: row;
-  }
-
-  .lg\:py-1 {
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
   }
 }
 @media (min-width: 1536px) {

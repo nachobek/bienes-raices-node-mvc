@@ -1,7 +1,7 @@
 import express from "express";
 
 
-import { loginForm, login, recoverPasswordForm, registerForm, register, activateAccount, recoverPassword, resetPasswordForm, resetPassword } from "../controllers/userController.js";
+import { loginForm, login, recoverPasswordForm, registerForm, register, activateAccount, recoverPassword, resetPasswordForm, resetPassword, logout, checkUserLogStatus } from "../controllers/userController.js";
 
 
 // Router development.
@@ -23,5 +23,8 @@ router.post('/recover-password', recoverPassword);
 
 router.get('/recover-password/:token', resetPasswordForm);
 router.post('/recover-password/:token', resetPassword);
+
+router.post('/logout', logout);
+router.get('/logStatus', checkUserLogStatus);
 
 export default router;

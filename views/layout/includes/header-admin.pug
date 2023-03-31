@@ -7,4 +7,6 @@ header.bg-indigo-500.p-4
         nav(class="my-5 text-sm md:flex md:items-center md:gap-3 font-bold text-white hidden")
             a(href="/my-properties") My Properties
             a(href="") Profile
-            a(href="" class="bg-indigo-700 py-2 px-10 rounded-lg") Sign Out
+            form(action="/auth/logout" method="POST")
+                input(type="hidden" name="_csrf" value= csrfToken)
+                input(type="submit" class="bg-indigo-700 py-2 px-10 rounded-lg" value="Sign Out")
