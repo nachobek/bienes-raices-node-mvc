@@ -319,7 +319,7 @@ const displayProperty = async (req, res) => {
         ]
     });
 
-    if (!property) {
+    if (!property || !property.isPublished) {
         return res.redirect('/404');
     }
 
@@ -424,6 +424,37 @@ const displayMessages = async (req, res) => {
     })
 }
 
+const changePropertyStatus = async (req, res) => {
+    // Validate property exists.
+    const { propertyId } = req.params;
+
+    const property = await Property.findByPk(propertyId);
+
+    if (!property) {
+        return res.redirect('/my-properties');
+    }
+
+    // Validate that the authenticated user owns the property to be changed.
+    if (req.user.id.toString() !== property.userId.toString()) {
+        return res.redirect('/my-properties');
+    }
+
+    // Change property published status.
+    // if (property.isPublished) {
+    //     property.isPublished = false;
+    // } else {
+    //     property.isPublished = true;
+    // }
+
+    property.isPublished = !property.isPublished;
+
+    await property.save();
+
+    return res.json({
+        result: 'ok'
+    });
+}
+
 
 export {
     admin,
@@ -436,5 +467,6 @@ export {
     deleteProperty,
     displayProperty,
     sendMessage,
-    displayMessages
+    displayMessages,
+    changePropertyStatus
 }

@@ -1,5 +1,9 @@
 extends ../layout/admin
 
+//- The styles block is being used to include the CSRF Token in the Head HTML section.
+block styles 
+    meta(name='csrf-token' content= csrfToken)
+
 block content
     div.py-10
         h1(class="text-4xl my-10 font-extrabold text-center") Real
@@ -32,9 +36,9 @@ block content
                                         a(href=`/messages/${property.id}` class="text-sm text-gray-800")= `${property.messages.length} Message(s). Click to see more`
 
                                 //- div(class="sm:w-1/4 md:w-2/6 lg:w-1/6 flex flex-col gap-2")
-                                div(class="sm:w-1/4 md:w-2/6 lg:flex-1 flex flex-col gap-2 lg:flex-row")
-                                    form(action="#")
-                                        input(type="submit" class=`px-2 py-2 md:py-1 text-xs leading-5 font-semibold rounded cursor-pointer w-full items-center ${property.isPublished ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}` value=`${property.isPublished ? 'Published' : 'Not Published'}`)
+                                //- div(class="sm:w-1/4 md:w-2/6 lg:flex-1 flex flex-col gap-2 lg:flex-row")
+                                div(class="sm:w-1/4 md:w-2/6 lg:w-1/6 flex flex-col gap-2 2xl:flex-row")
+                                    button(type="button" data-property-id=`${property.id}` class=`change-status px-2 py-2 md:py-1 text-xs leading-5 font-semibold rounded cursor-pointer w-full items-center ${property.isPublished ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`)=`${property.isPublished ? 'Published' : 'Not Published'}`
 
                                     a(href=`/properties/edit/${property.id}` class="px-2 py-2 md:py-1 text-xs leading-5 font-semibold rounded cursor-pointer bg-indigo-100 text-indigo-800 text-center") Edit
 
@@ -66,3 +70,6 @@ block content
 
         else 
             p.text-center Nothing to display here
+
+block scripts
+    script(src="/js/changeStatus.js")

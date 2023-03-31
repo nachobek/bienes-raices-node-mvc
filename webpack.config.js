@@ -6,7 +6,8 @@ export default {
         map: './src/js/map.js',
         uploadImage: './src/js/uploadImage.js',
         displayMap: './src/js/displayMap.js',
-        homePageMap: './src/js/homePageMap.js'
+        homePageMap: './src/js/homePageMap.js',
+        changeStatus: './src/js/changeStatus.js'
     },
     output: {
         filename: '[name].js',

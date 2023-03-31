@@ -2,7 +2,7 @@ import express from 'express';
 import { body } from 'express-validator'; // Same as check but only checking req.body.
 
 
-import { admin, listPropertyForm, listProperty, uploadImageForm, uploadImage, editPropertyForm, editProperty, deleteProperty, displayProperty, sendMessage, displayMessages } from '../controllers/propertyController.js';
+import { admin, listPropertyForm, listProperty, uploadImageForm, uploadImage, editPropertyForm, editProperty, deleteProperty, displayProperty, sendMessage, displayMessages, changePropertyStatus } from '../controllers/propertyController.js';
 import protectRoute from '../middlewares/protectRoute.js';
 import upload from '../middlewares/uploadImage.js';
 import identifyUser from '../middlewares/identifyUser.js';
@@ -60,6 +60,7 @@ router.post('/properties/edit/:propertyId', [
 
 router.post('/properties/delete/:propertyId', protectRoute, deleteProperty);
 
+router.put('/properties/:propertyId', protectRoute, changePropertyStatus);
 
 // Display messages for each property under "my-properties" view.
 router.get('/messages/:propertyId', protectRoute, displayMessages);
